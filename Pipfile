@@ -1,0 +1,21 @@
+[[source]]
+url = "https://pypi.python.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+fastapi = "~=0.104.1"
+injector = "~=0.21.0"
+pyjwt = "~=2.8.0"
+simplejson = "~=3.19.2"
+pydantic = "~=2.4.2"
+
+[dev-packages]
+mypy = "~=1.6.1"
+pytest = "*"
+python-dotenv = "*"
+flake8 = "*"
+uvicorn = {extras = ["standard"], version = "*"}
+
+[requires]
+python_version = "3.8"

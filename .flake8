@@ -1,0 +1,7 @@
+[flake8]
+max-line-length = 88
+max-doc-length = 88
+max-complexity = 10
+ignore = E203,E501,W5,B008
+select = B,C,E,F,W,T4
+extend-select = B950
