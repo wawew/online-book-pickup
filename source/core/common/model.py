@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import Optional
+from typing import List, Optional
 
 from source.core.common.enum import UserStatus, UserType
 
@@ -20,3 +20,22 @@ class User(BaseModel):
     status: UserStatus
     salt: str
     credential: str
+
+
+@dataclass
+class Book:
+    key: str
+    title: str
+    authors: List[str]
+    edition: int
+
+
+@dataclass
+class PaginationSpec:
+    page: int
+    limit: int
+
+
+@dataclass
+class PaginationResult(PaginationSpec):
+    total: int

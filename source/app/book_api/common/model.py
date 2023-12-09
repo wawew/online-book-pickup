@@ -1,11 +1,11 @@
 from typing import Any
 
-from pydantic import BaseModel
+from pydantic import BaseModel, PositiveInt
 
 
 class PydanticBaseModel(BaseModel):
     class Config:
-        allow_population_by_field_name = True
+        populate_by_name = True
         extra = "ignore"
 
 
@@ -23,3 +23,12 @@ DEFAULT_API_RESPONSES = {
     "200": {"model": DefaultSuccessResponse},
     "4XX": {"model": DefaultErrorResponse},
 }
+
+
+class PaginationRequest(PydanticBaseModel):
+    page: PositiveInt
+    limit: PositiveInt
+
+
+class PaginationResponse(PaginationRequest):
+    total: int
