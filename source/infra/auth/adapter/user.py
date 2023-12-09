@@ -2,15 +2,12 @@ import hashlib
 from datetime import datetime, timezone
 from typing import Dict, Optional
 
-from injector import inject
-
 from source.core.auth.port.user_adapter import IUserAdapter
 from source.core.common.enum import UserStatus, UserType
 from source.core.common.model import User
 
 
 class LocalStorageUserAdapter(IUserAdapter):
-    @inject
     def __init__(self) -> None:
         self.__local_data = self.__initiate_local_data()
 

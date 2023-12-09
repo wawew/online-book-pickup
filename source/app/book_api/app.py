@@ -7,7 +7,7 @@ from fastapi.exceptions import RequestValidationError
 from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import JSONResponse
 
-from source.app.book_api.api import user_api
+from source.app.book_api.api import book_api, user_api
 from source.app.book_api.common.model import DEFAULT_API_RESPONSES
 from source.core.common.exception import (
     EntityNotFoundException,
@@ -25,6 +25,7 @@ app = FastAPI(
     responses=DEFAULT_API_RESPONSES,  # type: ignore
 )
 app.include_router(user_api.router)
+app.include_router(book_api.router)
 
 
 @app.get("/docs", include_in_schema=False)

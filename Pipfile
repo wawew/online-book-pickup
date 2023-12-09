@@ -9,6 +9,7 @@ injector = "~=0.21.0"
 pyjwt = "~=2.8.0"
 simplejson = "~=3.19.2"
 pydantic = {extras = ["email"], version = "*"}
+requests = "~=2.31.0"
 
 [dev-packages]
 mypy = "~=1.6.1"
@@ -16,6 +17,7 @@ pytest = "*"
 python-dotenv = "*"
 flake8 = "*"
 uvicorn = {extras = ["standard"], version = "*"}
+types-requests = "*"
 
 [requires]
 python_version = "3.8"
