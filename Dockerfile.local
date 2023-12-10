@@ -1,0 +1,10 @@
+FROM python:3.8-slim-buster as local_base
+
+RUN apt-get update
+RUN apt-get install -y libpq-dev gcc
+RUN pip install pipenv
+
+COPY Pipfile* ./
+RUN pipenv install --dev --system --ignore-pipfile
+
+COPY source source
