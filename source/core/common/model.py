@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from datetime import datetime
-from typing import List, Optional
+from typing import List
 
 from source.core.common.enum import UserStatus, UserType
 
@@ -9,8 +9,6 @@ from source.core.common.enum import UserStatus, UserType
 class BaseModel:
     created_at: datetime
     created_by: str
-    updated_at: Optional[datetime]
-    updated_by: Optional[str]
 
 
 @dataclass
@@ -24,10 +22,20 @@ class User(BaseModel):
 
 @dataclass
 class Book:
-    key: str
+    work_key: str
     title: str
     authors: List[str]
-    edition: int
+    edition_key: str
+
+
+@dataclass
+class BookReservation(BaseModel):
+    key: str
+    book: Book
+    pickup_time: datetime
+    user_email: str
+    reservation_start_time: datetime
+    reservation_end_time: datetime
 
 
 @dataclass

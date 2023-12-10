@@ -8,6 +8,7 @@ from fastapi.openapi.docs import get_swagger_ui_html
 from fastapi.responses import JSONResponse
 
 from source.app.book_api.api import book_api, user_api
+from source.app.book_api.authorizer import PermissionDenied
 from source.app.book_api.common.model import DEFAULT_API_RESPONSES
 from source.core.common.exception import (
     EntityNotFoundException,
@@ -50,6 +51,7 @@ exception_to_error_map = {
     EntityNotFoundException: (422, "ENTITY_NOT_FOUND"),
     InvalidTokenException: (401, "INVALID_TOKEN_ERROR"),
     ExpiredTokenException: (401, "EXPIRED_TOKEN_ERROR"),
+    PermissionDenied: (403, "PERMISSION_DENIED_ERROR"),
 }
 
 

@@ -1,3 +1,5 @@
+from typing import Optional
+
 import requests
 
 from source.core.book.port.book_adapter import (
@@ -24,19 +26,48 @@ class OpenLibraryBookAdapter(IBookAdapter):
         if not subject_param:
             return GetBooksBySubjectAdapterResult(total=0, results=[])
 
-        response_json = requests.get(
+        response = requests.get(
             url=f"{self.__hostname}/subjects/{subject_param}.json",
             params={"offest": spec.page, "limit": spec.limit},
-        ).json()
+        )
+        if response.status_code != 200:
+            return GetBooksBySubjectAdapterResult(total=0, results=[])
+
+        works = response.json()
         results = [
             Book(
-                key=work["key"].rsplit("/", 1)[-1],
+                work_key=work["key"].rsplit("/", 1)[-1],
                 title=work["title"],
                 authors=[author_data["name"] for author_data in work["authors"]],
-                edition=work["lending_edition"],
+                edition_key=work["lending_edition"],
             )
-            for work in response_json["works"]
+            for work in works["works"]
         ]
         return GetBooksBySubjectAdapterResult(
-            total=response_json["work_count"], results=results
+            total=works["work_count"], results=results
+        )
+
+    def get_book_by_edition_key(self, edition_key: str) -> Optional[Book]:
+        bibkeys = f"OLID:{edition_key}"
+        response = requests.get(
+            url=f"{self.__hostname}/api/books",
+            params={
+                "bibkeys": bibkeys,
+                "jscmd": "details",
+                "format": "json",
+            },
+        )
+        if response.status_code != 200:
+            return None
+
+        response_json = response.json()
+        if not response_json:
+            return None
+
+        details = response_json[bibkeys]["details"]
+        return Book(
+            work_key=details["works"][0]["key"].rsplit("/", 1)[-1],
+            title=details["title"],
+            authors=[author_data["name"] for author_data in details["authors"]],
+            edition_key=edition_key,
         )
