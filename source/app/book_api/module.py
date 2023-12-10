@@ -5,8 +5,10 @@ from injector import Binder, Module, singleton
 
 from source.core.auth.port.authentication_service import IAuthenticationService
 from source.core.auth.service.authentication import AuthenticationService
+from source.core.book.port.book_reservation_service import IBookReservationService
 from source.core.book.port.book_service import IBookService
 from source.core.book.service.book import BookService
+from source.core.book.service.book_reservation import BookReservationService
 from source.core.common.port.secret_adapter import ISecretAdapter
 from source.infra.common.adapter.secret import LocalSecretAdapter
 
@@ -19,3 +21,4 @@ class ApplicationModule(Module):
 
         binder.bind(IAuthenticationService, to=AuthenticationService, scope=singleton)
         binder.bind(IBookService, to=BookService, scope=singleton)
+        binder.bind(IBookReservationService, to=BookReservationService, scope=singleton)

@@ -1,17 +1,30 @@
+from datetime import datetime
 from typing import List
 
-from fastapi import APIRouter, Body
+from fastapi import APIRouter, Body, Depends
 from fastapi.openapi.models import Example
 
-from source.app.book_api.common.model import PaginationRequest, PaginationResponse
+from source.app.book_api.authorizer import authorize_request
+from source.app.book_api.common.model import (
+    PaginationRequest,
+    PaginationResponse,
+    PydanticBaseModel,
+)
 from source.app.book_api.dependency_injector import dependency_injector
+from source.core.book.port.book_reservation_service import (
+    IBookReservationService,
+    ReserveBookSpec,
+)
 from source.core.book.port.book_service import GetBooksBySubjectSpec, IBookService
-from source.core.common.enum import BookSubject
-from source.core.common.model import Book
+from source.core.common.enum import BookSubject, UserType
+from source.core.common.model import Book, BookReservation
 
 router = APIRouter(prefix="/book", tags=["Book API"])
 book_service: IBookService = dependency_injector.get(
     interface=IBookService  # type:ignore
+)
+book_reservation_service: IBookReservationService = dependency_injector.get(
+    interface=IBookReservationService  # type:ignore
 )
 
 
@@ -42,7 +55,11 @@ get_books_by_subject_body_examples = {
 }
 
 
-@router.post("/get-by-subject", response_model=GetBooksBySubjectResponse)
+@router.post(
+    "/get-by-subject",
+    response_model=GetBooksBySubjectResponse,
+    dependencies=[Depends(authorize_request(UserType.MEMBER))],
+)
 def get_books_by_subject(
     request_data: GetBooksBySubjectRequest = Body(
         ..., openapi_examples=get_books_by_subject_body_examples
@@ -50,4 +67,25 @@ def get_books_by_subject(
 ):
     return book_service.get_books_by_subject(
         spec=GetBooksBySubjectSpec(**request_data.model_dump())
+    )
+
+
+class CreateBookReservationRequest(PydanticBaseModel):
+    edition_key: str
+    pickup_time: datetime
+    reservation_start_time: datetime
+    reservation_end_time: datetime
+
+
+class CreateBookReservationResponse(PydanticBaseModel, BookReservation):
+    pass
+
+
+@router.post("/reservation/create", response_model=CreateBookReservationResponse)
+def create_book_reservation(
+    request_data: CreateBookReservationRequest,
+    user_email: str = Depends(authorize_request(UserType.MEMBER)),
+):
+    return book_reservation_service.reserve_book(
+        spec=ReserveBookSpec(**dict(request_data.model_dump(), user_email=user_email))
     )

@@ -27,8 +27,6 @@ class LocalStorageUserAdapter(IUserAdapter):
                 status=UserStatus.ACTIVE,
                 salt="123",
                 credential=self.generate_credential(salt="123", password="member"),
-                updated_at=None,
-                updated_by=None,
             ),
             "librarian@email.com": User(
                 created_at=datetime.now(tz=timezone.utc),
@@ -38,7 +36,5 @@ class LocalStorageUserAdapter(IUserAdapter):
                 status=UserStatus.ACTIVE,
                 salt="123",
                 credential=self.generate_credential(salt="123", password="librarian"),
-                updated_at=None,
-                updated_by=None,
             ),
         }
