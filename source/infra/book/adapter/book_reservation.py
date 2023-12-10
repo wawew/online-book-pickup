@@ -4,9 +4,11 @@ from uuid import uuid4
 
 from source.core.book.port.book_reservation_adapter import (
     CreateBookReservationSpec,
+    GetBookReservationsAdapterResult,
     GetReservedBooksByTimeSpec,
     IBookReservationAdapter,
 )
+from source.core.book.port.book_reservation_service import GetAllBookReservationsSpec
 from source.core.common.model import BookReservation
 
 
@@ -36,6 +38,15 @@ class LocalStorageBookReservationAdapter(IBookReservationAdapter):
         )
         self.__local_data.append(book_reservation)
         return book_reservation
+
+    def get_book_reservations(
+        self, spec: GetAllBookReservationsSpec
+    ) -> GetBookReservationsAdapterResult:
+        offset_value = (spec.page - 1) * spec.limit
+        return GetBookReservationsAdapterResult(
+            total=len(self.__local_data),
+            results=self.__local_data[offset_value : offset_value + spec.limit],
+        )
 
     def __initiate_local_data(self) -> List[BookReservation]:
         return []

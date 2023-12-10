@@ -12,6 +12,7 @@ from source.app.book_api.common.model import (
 )
 from source.app.book_api.dependency_injector import dependency_injector
 from source.core.book.port.book_reservation_service import (
+    GetAllBookReservationsSpec,
     IBookReservationService,
     ReserveBookSpec,
 )
@@ -40,17 +41,17 @@ get_books_by_subject_body_examples = {
     BookSubject.MATHEMATICS.name: Example(
         summary=BookSubject.MATHEMATICS,
         description=f"Get books by {BookSubject.MATHEMATICS} subject",
-        value={"subject": BookSubject.MATHEMATICS, "page": 1, "limit": 5},
+        value={"subject": BookSubject.MATHEMATICS, "page": 1, "limit": 20},
     ),
     BookSubject.PHYSICS.name: Example(
         summary=BookSubject.PHYSICS,
         description=f"Get books by {BookSubject.PHYSICS} subject",
-        value={"subject": BookSubject.PHYSICS, "page": 1, "limit": 5},
+        value={"subject": BookSubject.PHYSICS, "page": 1, "limit": 20},
     ),
     BookSubject.PROGRAMMING.name: Example(
         summary=BookSubject.PROGRAMMING,
         description=f"Get books by {BookSubject.PROGRAMMING} subject",
-        value={"subject": BookSubject.PROGRAMMING, "page": 1, "limit": 5},
+        value={"subject": BookSubject.PROGRAMMING, "page": 1, "limit": 20},
     ),
 }
 
@@ -88,4 +89,23 @@ def create_book_reservation(
 ):
     return book_reservation_service.reserve_book(
         spec=ReserveBookSpec(**dict(request_data.model_dump(), user_email=user_email))
+    )
+
+
+class GetAllBookReservationsRequest(PaginationRequest):
+    pass
+
+
+class GetAllBookReservationsResponse(PaginationResponse):
+    results: List[BookReservation]
+
+
+@router.post(
+    "/reservation/get-all",
+    response_model=GetAllBookReservationsResponse,
+    dependencies=[Depends(authorize_request(UserType.LIBRARIAN))],
+)
+def get_all_book_reservations(request_data: GetAllBookReservationsRequest):
+    return book_reservation_service.get_all_book_reservations(
+        spec=GetAllBookReservationsSpec(**request_data.model_dump())
     )
