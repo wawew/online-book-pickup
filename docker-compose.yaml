@@ -1,0 +1,18 @@
+version: '3.8'
+
+services:
+  book_api_local:
+    build:
+      context: .
+      dockerfile: Dockerfile.local
+    network_mode: host
+    env_file:
+      - .env
+    environment:
+      - APP_ENV=local
+      - PYTHONUNBUFFERED=1
+    ports:
+      - "8081:8081"
+    volumes:
+      - .:/app
+    command: uvicorn source.app.book_api.app:app --reload --host=0.0.0.0 --port=8081
