@@ -9,6 +9,8 @@ from source.core.book.port.book_reservation_adapter import (
     IBookReservationAdapter,
 )
 from source.core.book.port.book_reservation_service import (
+    GetAllBookReservationsResult,
+    GetAllBookReservationsSpec,
     IBookReservationService,
     ReserveBookSpec,
 )
@@ -41,6 +43,19 @@ class BookReservationService(IBookReservationService):
                 reservation_start_time=spec.reservation_start_time,
                 reservation_end_time=spec.reservation_end_time,
             )
+        )
+
+    def get_all_book_reservations(
+        self, spec: GetAllBookReservationsSpec
+    ) -> GetAllBookReservationsResult:
+        book_reservations = self.book_reservation_adapter.get_book_reservations(
+            spec=spec
+        )
+        return GetAllBookReservationsResult(
+            page=spec.page,
+            limit=spec.limit,
+            total=book_reservations.total,
+            results=book_reservations.results,
         )
 
     def __validate_reserve_book(self, spec: ReserveBookSpec) -> None:
